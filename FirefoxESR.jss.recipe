@@ -10,6 +10,8 @@
         <dict>
             <key>NAME</key>
             <string>Mozilla Firefox ESR</string>
+            <key>RELEASE</key>
+			<string>esr-latest</string>
             <key>DOWNLOAD_URL</key>
         	<string>https://download.mozilla.org/?product=firefox-esr-latest&amp;os=osx&amp;lang=en-US</string>
             <key>JSS_INVENTORY_NAME</key>
