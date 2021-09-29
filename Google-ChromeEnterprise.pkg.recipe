@@ -1,92 +1,91 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
-    <dict>
-        <key>Description</key>
-        <string>Uses parent pkg recipe to download latest Google Chrome Enterprise installer package.</string>
-        <key>Identifier</key>
-        <string>com.github.distorted-fields.pkg.ChromeEnterprise</string>
-        <key>Input</key>
-        <dict>
-            <key>NAME</key>
-            <string>Google Chrome</string>
-            <key>GROUPNAME</key>
-            <string>GoogleChrome</string>
-            <string>Browsers</string>
-            <key>DESCRIPTION</key>
-            <string>Google Chrome is a browser that combines a minimal design with sophisticated technology to make the web faster, safer, and easier.</string>
-        </dict>
-        <key>MinimumVersion</key>
-        <string>0.4.0</string>
-        <key>ParentRecipe</key>
-        <string>com.github.autopkg.pkg.googlechromepkg</string>
-        <key>Process</key>
-        <array>
-        <dict>
+   <dict>
+      <key>Description</key>
+      <string>Downloads the latest version of the Google Chrome Enterprise installer package and renames the package.</string>
+      <key>Identifier</key>
+      <string>com.github.distorted-fields.pkg.ChromeEnterprise</string>
+      <key>Input</key>
+      <dict>
+         <key>NAME</key>
+         <string>Google Chrome</string>
+         <key>VENDOR</key>
+         <string>Google</string>
+         <key>SOFTWARETITLE</key>
+         <string>Chrome</string>
+      </dict>
+      <key>MinimumVersion</key>
+      <string>1.0.0</string>
+      <key>ParentRecipe</key>
+      <string>com.github.autopkg.download.googlechromepkg</string>
+      <key>Process</key>
+      <array>
+         <dict>
+            <key>Arguments</key>
+            <dict>
+               <key>destination_path</key>
+               <string>%RECIPE_CACHE_DIR%/downloads/unpack</string>
+               <key>flat_pkg_path</key>
+               <string>%pathname%</string>
+            </dict>
             <key>Processor</key>
             <string>FlatPkgUnpacker</string>
+         </dict>
+         <dict>
             <key>Arguments</key>
             <dict>
-                <key>dmg_path</key>
-                <string>%pathname%</string>
+               <key>pattern</key>
+               <string>%RECIPE_CACHE_DIR%/downloads/unpack/*GoogleChrome*.pkg</string>
             </dict>
-        </dict>
-        <dict>
             <key>Processor</key>
-            <string>PkgRootCreator</string>
+            <string>FileFinder</string>
+         </dict>
+         <dict>
             <key>Arguments</key>
             <dict>
-                <key>pkgroot</key>
-                <string>%RECIPE_CACHE_DIR%/%NAME%</string>
-                <key>pkgdirs</key>
-                <dict>
-                    <key>Applications</key>
-                    <string>0775</string>
-                </dict>
+               <key>destination_path</key>
+               <string>%RECIPE_CACHE_DIR%/downloads/payload</string>
+               <key>pkg_payload_path</key>
+               <string>%found_filename%/Payload</string>
             </dict>
-        </dict>
-        <dict>
             <key>Processor</key>
-            <string>Copier</string>
+            <string>PkgPayloadUnpacker</string>
+         </dict>
+         <dict>
             <key>Arguments</key>
             <dict>
-                <key>source_path</key>
-                <string>%pathname%/%app_name%</string>
-                <key>destination_path</key>
-                <string>%pkgroot%/Applications/%app_name%</string>
+               <key>input_plist_path</key>
+               <string>%RECIPE_CACHE_DIR%/downloads/payload/Google Chrome.app/Contents/Info.plist</string>
+               <key>plist_version_key</key>
+               <string>CFBundleShortVersionString</string>
             </dict>
-        </dict>
-        <dict>
             <key>Processor</key>
-            <string>PkgCreator</string>
+            <string>Versioner</string>
+         </dict>
+         <dict>
+            <key>Processor</key>
+            <string>PkgCopier</string>
             <key>Arguments</key>
             <dict>
-                <key>pkg_request</key>
-                <dict>
-                    <key>pkgname</key>
-                    <string>%NAME%-%version%</string>
-                    <key>version</key>
-                    <string>%version%</string>
-                    <key>id</key>
-                    <string>%bundleid%</string>
-                    <key>options</key>
-                    <string>purge_ds_store</string>
-                    <key>scripts</key>
-                    <string>Scripts</string>
-                    <key>chown</key>
-                    <array>
-                        <dict>
-                            <key>path</key>
-                            <string>Applications</string>
-                            <key>user</key>
-                            <string>root</string>
-                            <key>group</key>
-                            <string>admin</string>
-                        </dict>
-                    </array>
-                </dict>
+               <key>source_pkg</key>
+               <string>%pathname%</string>
+               <key>pkg_path</key>
+               <string>%RECIPE_CACHE_DIR%/%VENDOR%_%SOFTWARETITLE%_%version%.pkg</string>
             </dict>
-        </dict>
-    </array>
-    </dict>
+         </dict>
+         <dict>
+            <key>Processor</key>
+            <string>PathDeleter</string>
+            <key>Arguments</key>
+            <dict>
+               <key>path_list</key>
+               <array>
+                  <string>%RECIPE_CACHE_DIR%/downloads/unpack</string>
+                  <string>%RECIPE_CACHE_DIR%/downloads/payload</string>
+               </array>
+            </dict>
+         </dict>
+      </array>
+   </dict>
 </plist>
