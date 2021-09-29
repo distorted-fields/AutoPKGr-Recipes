@@ -5,7 +5,7 @@
         <key>Description</key>
         <string>Uses parent pkg recipe to download latest Google Chrome Enterprise installer package.</string>
         <key>Identifier</key>
-        <string>com.github.wzrdprst.pkg.ChromeEnterprise</string>
+        <string>com.github.distorted-fields.pkg.ChromeEnterprise</string>
         <key>Input</key>
         <dict>
             <key>NAME</key>
